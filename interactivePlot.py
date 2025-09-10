@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+e# -*- coding: utf-8 -*-
 """
 Created on Fri Jun 14, 2024
 
@@ -119,7 +119,7 @@ def outputdash(priismdata, facilitylinkdata, supplylinkdata, searchtype):
         # Initialize the app with css
         external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
         app = Dash(external_stylesheets=external_stylesheets)
-        
+        server=app.server
         # App layout
         app.layout = html.Div([
         # =============================================================================
@@ -573,7 +573,7 @@ def outputdash(priismdata, facilitylinkdata, supplylinkdata, searchtype):
         # Initialize the app with css
         external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
         app = Dash(external_stylesheets=external_stylesheets)
-        
+        server=app.server
         # App layout
         app.layout = html.Div([
             #Precision Graph
@@ -845,3 +845,4 @@ outputdash(pd.read_excel(https://github.com/Curvedrain/Illinois-Hospital-WWTPs/b
 
 #outputdash(pd.read_excel("PRIISM_List_Nomination_06SEP24v2.xlsx"), pd.read_excel(r"C:\Users\detec\OneDrive\Documents\Python Scripts\Illinois Wastewater Network Files\Outputted Link Data_PRIISM_List_Nomination_06SEP24v2.xlsx.xlsx", 'Facility Link Data'), pd.read_excel(r"C:\Users\detec\OneDrive\Documents\Python Scripts\Illinois Wastewater Network Files\Outputted Link Data_PRIISM_List_Nomination_06SEP24v2.xlsx.xlsx", 'Supply Link Data', keep_default_na=False),"NodeSearch")
 #outputdash(pd.read_excel("PRIISM_List_Nomination_06SEP24v2.xlsx"), pd.read_excel(r"C:\Users\detec\OneDrive\Documents\Python Scripts\Illinois Wastewater Network Files\Outputted Link Data_PRIISM_List_Nomination_06SEP24v2.xlsx.xlsx", 'Facility Link Data'), pd.read_excel(r"C:\Users\detec\OneDrive\Documents\Python Scripts\Illinois Wastewater Network Files\Outputted Link Data_PRIISM_List_Nomination_06SEP24v2.xlsx.xlsx", 'Supply Link Data', keep_default_na=False), "AreaSearch")
+
