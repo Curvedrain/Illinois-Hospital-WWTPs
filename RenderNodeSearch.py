@@ -584,4 +584,5 @@ def update_zoom_graph(node_chosen, mapviewboolean):
 
 '''Run the app'''
 #if __name__ == '__main__':
+
 app.run(debug=True)
