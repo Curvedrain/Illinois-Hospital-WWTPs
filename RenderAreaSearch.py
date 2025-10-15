@@ -412,9 +412,9 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
                                     intersection = intersection + 1
                     if intersection != 0:
                         LinkList = LinkList + [(FacilityLinkInfo.iloc[i]["Facility Node ID"].item(), FacilityLinkInfo.iloc[i]["Linked Supply List"][j])]
-    print("Node List", NodeList)
+    #print("Node List", NodeList)
     NodeList = [priismdata.loc[priismdata['Node ID']==NodeID].iloc[0]['Facility Name'] + ' (' + str(NodeID) + ')' for NodeID in NodeList]
-    print("Link List", LinkList)
+    #print("Link List", LinkList)
     LinkList = ['[' + (priismdata.loc[priismdata['Node ID']==Links[0]].iloc[0]['Facility Name'] + ' (' + str(Links[0]) + ')' ) + ', ' + (priismdata.loc[priismdata['Node ID']==Links[1]].iloc[0]['Facility Name'] + ' (' + str(Links[1]) + ')' ) + ']' for Links in LinkList]
         
     if len(NodeList) > len(LinkList):
@@ -437,3 +437,4 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
 #if __name__ == '__main__':
 
 app.run_server(debug=True, host='0.0.0.0', port=8051)
+
