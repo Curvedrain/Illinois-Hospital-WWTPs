@@ -233,7 +233,7 @@ def updateprecisiongraph(click, mapviewboolean, longinput, latinput, radiusinput
             for n in range(0, N):
                 lons = lons + [longinput + extrax * np.cos(2*np.pi/N*n)]
                 lats = lats + [latinput + extray * np.sin(2*np.pi/N*n)]
-                print(lons)
+                #print(lons)
             fig.add_trace(go.Scattermapbox(
                 lat=lats,
                 lon=lons,
@@ -437,4 +437,5 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
 #if __name__ == '__main__':
 
 app.run_server(debug=True, host='0.0.0.0', port=8051)
+
 
