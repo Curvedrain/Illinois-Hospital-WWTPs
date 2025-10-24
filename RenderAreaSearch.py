@@ -223,9 +223,6 @@ def updateprecisiongraph(click, mapviewboolean, longinput, latinput, radiusinput
         
         extrax = np.arccos(1-2*a / (np.cos(latinput * p) ** 2)) / p
         extray = np.arccos(1-2*a)/p
-        #tests
-        #print(longinput, latinput, longinput+extrax, longinput-extrax)
-        #print(longinput, latinput, latinput+extray, latinput-extray)
         if mapviewboolean:
             lons = []
             lats = []
@@ -266,26 +263,30 @@ def updatefreehandgraph(mapviewboolean, boxselect, panmode, lassoselect):
         button_id = ctx.triggered_id 
 
     fig = createdefaultgraph(mapviewboolean)
-        
-    fig.update_layout(
-        title = {'text': "Freehand Area Search: " + button_id},
-        uirevision='0'
-        )
+    
+    if button_id == 'mapviewcheckfreehand':
+        fig.update_layout(
+            title = {'text': "Freehand Area Search: Pan-Mode"},
+            uirevision='0'
+            )
+    else:
+        fig.update_layout(
+            title = {'text': "Freehand Area Search: " + button_id},
+            uirevision='0'
+            )
     if button_id == 'Box-Select':
         fig.update_layout(dragmode = 'select')
-    
     if button_id == 'Pan-Mode':
         fig.update_layout(dragmode ='pan', uirevision='0')
-    
     if button_id == 'Lasso-Select':
         fig.update_layout(dragmode ='lasso')
-    
-    
+
     return fig
 
 #List of Links
 @callback(
     Output(component_id = 'selectedlinklist', component_property = 'data'),
+    Input('mapviewcheckfreehand', component_property='value'),
     Input('submit-button-state', 'n_clicks'),
     Input(component_id='search-type', component_property='value'),
     State('long-input', 'value'),
@@ -296,7 +297,7 @@ def updatefreehandgraph(mapviewboolean, boxselect, panmode, lassoselect):
     Input('Pan-Mode', 'n_clicks'),
     Input('Lasso-Select', 'n_clicks')
 )
-def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehandgraphdata, boxselect, panmode, lassoselect):
+def updatelinklist(mapviewboolean, click, searchtype, longinput, latinput, radiusinput, freehandgraphdata, boxselect, panmode, lassoselect):
     
     NodeList = []
     LinkList = []
@@ -352,19 +353,15 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
         button_id = 'Box-Select'
         if ctx.triggered_id != None:
             button_id = ctx.triggered_id
-            #print(button_id)
             
         if button_id == 'Pan-Mode' or ('range' not in freehandgraphdata and 'lassoPoints' not in freehandgraphdata):
             return no_update
 
-        #print(freehandgraphdata)
         pointlist = freehandgraphdata.get('points')
-        #print(pointlist)
         NodeList = [dictionary.get('hovertext').replace('Node ID: ', '') for dictionary in pointlist]
-        #print(NodeList)
         NodeList = [int(priismdatastrings[priismdatastrings["Facility Name"] == nodeid].iloc[0]["Node ID"]) for nodeid in NodeList]
-        #Go through all links. If the facility or supply is in the NodeList, so is the link.
         
+        #Go through all links. If the facility or supply is in the NodeList, so is the link.
         for i in range(0, FacilityLinkInfo.shape[0]):
             for j in range(0,len(FacilityLinkInfo.iloc[i]["Supply Lat-Longs"])):
                 if FacilityLinkInfo.iloc[i]["Facility Node ID"].item() in NodeList or FacilityLinkInfo.iloc[i]["Linked Supply List"][j] in NodeList:
@@ -379,9 +376,19 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
                     
                     #add links based on whether range is given from box select or lasso select
                     if 'range' in freehandgraphdata.keys():
-                        #print('ranging')
-                        xrange = freehandgraphdata.get('range').get('x')
-                        yrange = freehandgraphdata.get('range').get('y')
+                        if mapviewboolean:
+                            xbounds = [freehandgraphdata.get('range').get('mapbox')[0][0],
+                                      freehandgraphdata.get('range').get('mapbox')[1][0]]
+                            ybounds = [freehandgraphdata.get('range').get('mapbox')[1][1],
+                                      freehandgraphdata.get('range').get('mapbox')[0][1]]
+                            
+                            xrange = [min(xbounds),
+                                      max(xbounds)]
+                            yrange = [min(ybounds),
+                                      max(ybounds)]
+                        else:
+                            xrange = freehandgraphdata.get('range').get('x')
+                            yrange = freehandgraphdata.get('range').get('y')
 
                         #see if intersection is in rectangle and in line segment
                         for xvalue in xrange:
@@ -391,9 +398,14 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
                             if min(xrange[0], xrange[1]) <= (yvalue - f2)/m + f1 <= max(xrange[0], xrange[1]) and (min(f2,s2) <= yvalue <= max(f2,s2)):
                                 intersection = intersection + 1
                     if 'lassoPoints' in freehandgraphdata.keys():
-                        #print("lassoing")
-                        xvalues = freehandgraphdata.get('lassoPoints').get('x')
-                        yvalues = freehandgraphdata.get('lassoPoints').get('y')
+                        if mapviewboolean:
+                            #iterate over list of coordinates
+                            coords = freehandgraphdata.get('lassoPoints').get('mapbox')
+                            xvalues = [i[0] for i in coords]
+                            yvalues = [i[1] for i in coords]
+                        else:
+                            xvalues = freehandgraphdata.get('lassoPoints').get('x')
+                            yvalues = freehandgraphdata.get('lassoPoints').get('y')
                         for k in range(0, len(xvalues)-1):
                             #vertical line case
                             if xvalues[k+1] - xvalues[k] == 0:
@@ -412,9 +424,7 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
                                     intersection = intersection + 1
                     if intersection != 0:
                         LinkList = LinkList + [(FacilityLinkInfo.iloc[i]["Facility Node ID"].item(), FacilityLinkInfo.iloc[i]["Linked Supply List"][j])]
-    #print("Node List", NodeList)
     NodeList = [priismdata.loc[priismdata['Node ID']==NodeID].iloc[0]['Facility Name'] + ' (' + str(NodeID) + ')' for NodeID in NodeList]
-    #print("Link List", LinkList)
     LinkList = ['[' + (priismdata.loc[priismdata['Node ID']==Links[0]].iloc[0]['Facility Name'] + ' (' + str(Links[0]) + ')' ) + ', ' + (priismdata.loc[priismdata['Node ID']==Links[1]].iloc[0]['Facility Name'] + ' (' + str(Links[1]) + ')' ) + ']' for Links in LinkList]
         
     if len(NodeList) > len(LinkList):
@@ -437,5 +447,6 @@ def updatelinklist(click, searchtype, longinput, latinput, radiusinput, freehand
 #if __name__ == '__main__':
 
 app.run_server(debug=True, host='0.0.0.0', port=8051)
+
 
 
