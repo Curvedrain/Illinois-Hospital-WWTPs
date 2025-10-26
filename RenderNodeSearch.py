@@ -80,7 +80,7 @@ def createdefaultgraph(mapviewboolean, hiddenlinks = None):
         CentralLat = 0.5 * ( min(priismdatastrings["Latitude"].tolist()) + max(priismdatastrings["Latitude"].tolist()))
         CentralLon = 0.5 * ( min(priismdatastrings["Longitude"].tolist()) + max(priismdatastrings["Longitude"].tolist()))
         fig=px.scatter_mapbox(priismdatastrings, lon = "Longitude", lat = "Latitude", color = "NodeType", color_discrete_sequence=["green", "blue"], title = "Proposed Links: Illinois Dataset",
-                          width = 505, height = 700, zoom=5.6, center= {'lon': CentralLon, 'lat':CentralLat},
+                          width = 505, height = 650, zoom=5.6, center= {'lon': CentralLon, 'lat':CentralLat},
                           hover_name = 'Facility Name',
                           hover_data = {'Node ID': True,
                                         'Latitude': True,
@@ -91,7 +91,7 @@ def createdefaultgraph(mapviewboolean, hiddenlinks = None):
         fig.update_layout(mapbox_style="open-street-map")
     else:
         fig=px.scatter(priismdatastrings, x = "Longitude", y = "Latitude", color = "NodeType", color_discrete_sequence=["green", "blue"], title = "Precise Search Graph",
-                          width = 505, height = 700,
+                          width = 505, height = 650,
                           hover_name = 'Facility Name',
                           hover_data = {'Node ID': True,
                                         'Latitude': True,
@@ -126,7 +126,7 @@ def createdefaultgraph(mapviewboolean, hiddenlinks = None):
         title = {'x':0.5,
                  'xanchor': 'center', 
                  'y':0.98},
-        margin=dict(t=32)
+        margin=dict(t=32,b=0)
         )
     return fig
 
@@ -203,7 +203,7 @@ def update_graph(node_chosen, mapviewboolean):
         CentralLat = 0.5 * ( min(priismdatastrings["Latitude"].tolist()) + max(priismdatastrings["Latitude"].tolist()))
         CentralLon = 0.5 * ( min(priismdatastrings["Longitude"].tolist()) + max(priismdatastrings["Longitude"].tolist()))
         fig=px.scatter_mapbox(priismdatastrings, lon = "Longitude", lat = "Latitude", color = "NodeType", color_discrete_sequence=["green", "blue"], title = "Proposed Links: Illinois Dataset",
-                          width = 505, height = 700, zoom=5.6, center= {'lon': CentralLon, 'lat':CentralLat},
+                          width = 505, height = 650, zoom=5.6, center= {'lon': CentralLon, 'lat':CentralLat},
                           hover_name = 'Facility Name',
                           hover_data = {'Node ID': True,
                                         'Latitude': True,
@@ -214,7 +214,7 @@ def update_graph(node_chosen, mapviewboolean):
         fig.update_layout(mapbox_style="open-street-map")
     else:
         fig=px.scatter(priismdatastrings, x = "Longitude", y = "Latitude", color = "NodeType", color_discrete_sequence=["green", "blue"], title = "Proposed Links: Illinois Dataset",
-                          width = 505, height = 700,
+                          width = 505, height = 650,
                           hover_name = 'Facility Name',
                           hover_data = {'Node ID': True,
                                         'Latitude': True,
@@ -401,7 +401,8 @@ def update_graph(node_chosen, mapviewboolean):
             y=1.1,
             x=0
             ),
-        title = {'y':0.975, 'x':0.83},
+        title = {'y':0.975, 'x':0.78},
+        margin=dict(b=0),
         modebar={
           'orientation': 'v',
           'bgcolor': '#E9E9E9',
@@ -527,7 +528,7 @@ def update_zoom_graph(node_chosen, mapviewboolean):
         #plot nodes
         if mapviewboolean:
             fig=px.scatter_mapbox(priismdatasubset, lon = "Longitude", lat = "Latitude", color = "NodeType", color_discrete_sequence=colorsequence, title = "Zoomed-In Links for Node " + str(node_chosen),
-                              width = 353, height = 490,
+                              width = 353, height = 360,
                               hover_name = 'Facility Name',
                               hover_data = {'Node ID': True,
                                             'Latitude': True,
@@ -537,7 +538,7 @@ def update_zoom_graph(node_chosen, mapviewboolean):
                               ).update_layout(dragmode='pan')
         else:
             fig=px.scatter(priismdatasubset, x = "Longitude", y = "Latitude", color = "NodeType", color_discrete_sequence=colorsequence, title = "Zoomed-In Links for Node " + str(node_chosen),
-                              width = 303, height = 420,
+                              width = 333, height = 380,
                               hover_name = 'Facility Name',
                               hover_data = {'Node ID': True,
                                             'Latitude': True,
@@ -578,7 +579,8 @@ def update_zoom_graph(node_chosen, mapviewboolean):
                             'bgcolor': '#E9E9E9',
                             'color': 'black',
                             'activecolor': '#9ED3CD'
-                            }
+                            },
+                          margin=dict(t=50,b=0)
                           )
         return fig
 
@@ -587,6 +589,7 @@ def update_zoom_graph(node_chosen, mapviewboolean):
 #if __name__ == '__main__':
 
 app.run_server(debug=True, host='0.0.0.0', port=8050)
+
 
 
 
