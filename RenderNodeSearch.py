@@ -63,15 +63,6 @@ columnconvert(SupplyLinkInfo, "Linked Facility List")
 columnconvert(SupplyLinkInfo, "Facility Lat-Longs")
 columnconvert(SupplyLinkInfo, "Probability: Square Method")
 
-
-# =============================================================================
-# FacilityLinkInfo['Facility Lats'] = FacilityLinkInfo["Facility Lat-Longs"].str[1]
-# FacilityLinkInfo['Facility Longs'] = FacilityLinkInfo["Facility Lat-Longs"].str[0]
-# 
-# SupplyLinkInfo['Supply Lats'] = SupplyLinkInfo["Supply Lat-Longs"].str[1]
-# SupplyLinkInfo['Supply Longs'] = SupplyLinkInfo["Supply Lat-Longs"].str[0]
-# =============================================================================
-
 NodeIDs = [str(x) + ' (' + str(y) + ')' for x, y in zip(priismdata['Facility Name'], priismdata['Node ID'])]
 NodeIDs = ["All Nodes"] + NodeIDs
 
@@ -140,16 +131,7 @@ server = app.server
 
 # App layout
 app.layout = html.Div([
-# =============================================================================
-#     html.Div(className='row', children='Illinois Proposed Link Data'),
-#     
-#     html.Div(className='row', children = [
-#         #Ouputted Data tables from excel sheet
-#         dash_table.DataTable(data=df1.to_dict('records'), page_size=10),
-#         dash_table.DataTable(data=df2.to_dict('records'), page_size=10),
-#         html.Hr()
-#     ]),
-# =============================================================================
+    
     html.Div(className = 'row', children = [
         #Interactive features
         
@@ -227,32 +209,16 @@ def update_graph(node_chosen, mapviewboolean):
     LegendGroups = []
     
     if node_chosen == "All Nodes": 
+        if mapviewboolean != True:
+            #For each facility
+            for i in range (0, FacilityLinkInfo.shape[0]):
+                #And each supply linked to said facility
+                for j in FacilityLinkInfo.iloc[i]['Linked Supply List']:
+                    
+                    #Find color in Red Yellow Green Gradient, and convert to rgba
+                    linecolor = cm.RdYlGn((float(FacilityLinkInfo.iloc[i][probmethod_chosen][FacilityLinkInfo.iloc[i]['Linked Supply List'].index(j)].replace("\'", "").replace("%", ""))/100))
+                    linecolor = tuple(float(s) for s in str(linecolor).replace("np.float64", "").replace("(", "").replace(")","").split(","))
 
-        #For each facility
-        for i in range (0, FacilityLinkInfo.shape[0]):
-            #And each supply linked to said facility
-            for j in FacilityLinkInfo.iloc[i]['Linked Supply List']:
-                
-                #Find color in Red Yellow Green Gradient, and convert to rgba
-                linecolor = cm.RdYlGn((float(FacilityLinkInfo.iloc[i][probmethod_chosen][FacilityLinkInfo.iloc[i]['Linked Supply List'].index(j)].replace("\'", "").replace("%", ""))/100))
-                linecolor = tuple(float(s) for s in str(linecolor).replace("np.float64", "").replace("(", "").replace(")","").split(","))
-                
-                if mapviewboolean:
-                    #Plot the Link
-                    fig.add_trace(go.Scattermapbox(
-                        lon = [Facilities.iloc[i]["x"], Supplies.loc[Supplies['Node ID'] == j].iloc[0]['x']], 
-                        lat = [Facilities.iloc[i]["y"], Supplies.loc[Supplies['Node ID'] == j].iloc[0]['y']], 
-                        #Red Yellow Green Gradient
-                        mode = "lines",
-                        line_color = 'rgba' + str(linecolor),
-                        legendgroup = int(any(FacilityLinkInfo.iloc[i][probmethod_chosen][FacilityLinkInfo.iloc[i]['Linked Supply List'].index(j)] < k for k in FacilityLinkInfo.iloc[i][probmethod_chosen])),
-                        legendrank = 1000+int(any(FacilityLinkInfo.iloc[i][probmethod_chosen][FacilityLinkInfo.iloc[i]['Linked Supply List'].index(j)] < k for k in FacilityLinkInfo.iloc[i][probmethod_chosen])),
-                        name = MostProbable[int(any(FacilityLinkInfo.iloc[i][probmethod_chosen][FacilityLinkInfo.iloc[i]['Linked Supply List'].index(j)] < k for k in FacilityLinkInfo.iloc[i][probmethod_chosen]))],
-                        showlegend = int(any(FacilityLinkInfo.iloc[i][probmethod_chosen][FacilityLinkInfo.iloc[i]['Linked Supply List'].index(j)] < k for k in FacilityLinkInfo.iloc[i][probmethod_chosen])) not in LegendGroups
-                        ))
-                    fig.update_traces(hoverinfo='skip')
-                    LegendGroups = LegendGroups + [int(any(FacilityLinkInfo.iloc[i][probmethod_chosen][FacilityLinkInfo.iloc[i]['Linked Supply List'].index(j)] < k for k in FacilityLinkInfo.iloc[i][probmethod_chosen]))]
-                else:
                     #Plot the Link
                     fig.add_trace(go.Scatter(
                         x = [Facilities.iloc[i]["x"], Supplies.loc[Supplies['Node ID'] == j].iloc[0]['x']], 
@@ -589,6 +555,7 @@ def update_zoom_graph(node_chosen, mapviewboolean):
 #if __name__ == '__main__':
 
 app.run_server(debug=True, host='0.0.0.0', port=8050)
+
 
 
 
