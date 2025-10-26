@@ -80,7 +80,7 @@ def createdefaultgraph(mapviewboolean, hiddenlinks = None):
         CentralLat = 0.5 * ( min(priismdatastrings["Latitude"].tolist()) + max(priismdatastrings["Latitude"].tolist()))
         CentralLon = 0.5 * ( min(priismdatastrings["Longitude"].tolist()) + max(priismdatastrings["Longitude"].tolist()))
         fig=px.scatter_mapbox(priismdatastrings, lon = "Longitude", lat = "Latitude", color = "NodeType", color_discrete_sequence=["green", "blue"], title = "Proposed Links: Illinois Dataset",
-                          width = 505, height = 700, zoom=5.6, center= {'lon': CentralLon, 'lat':CentralLat},
+                          width = 505, height = 575, zoom=5.6, center= {'lon': CentralLon, 'lat':CentralLat},
                           hover_name = 'Facility Name',
                           hover_data = {'Node ID': True,
                                         'Latitude': True,
@@ -91,7 +91,7 @@ def createdefaultgraph(mapviewboolean, hiddenlinks = None):
         fig.update_layout(mapbox_style="open-street-map")
     else:
         fig=px.scatter(priismdatastrings, x = "Longitude", y = "Latitude", color = "NodeType", color_discrete_sequence=["green", "blue"], title = "Precise Search Graph",
-                          width = 505, height = 700,
+                          width = 505, height = 575,
                           hover_name = 'Facility Name',
                           hover_data = {'Node ID': True,
                                         'Latitude': True,
@@ -126,7 +126,7 @@ def createdefaultgraph(mapviewboolean, hiddenlinks = None):
         title = {'x':0.5,
                  'xanchor': 'center', 
                  'y':0.98},
-        margin=dict(t=32)
+        margin=dict(t=32, b=0)
         )
     return fig
 
@@ -140,6 +140,11 @@ server = app.server
 
 # App layout
 app.layout = html.Div([
+    #Precision vs. Freehand
+    html.Div(className='nine columns', children=[
+    dcc.RadioItems(['Precise Search', 'Freehand Search'], 'Precise Search', inline = True, id = 'search-type')
+    ]),
+    html.Div([
     #Precision Graph
     html.Div(className='five columns', children=[
         #Inputs for area
@@ -197,8 +202,8 @@ app.layout = html.Div([
     ]),
     
     html.Div(className= 'two columns', children=[
-        dcc.RadioItems(['Precise Search', 'Freehand Search'], 'Precise Search', inline = True, id = 'search-type'),
         dash_table.DataTable(id="selectedlinklist", style_cell={'text-align': 'center'})
+    ])
     ])
 ])
 #%%
@@ -447,6 +452,7 @@ def updatelinklist(mapviewboolean, click, searchtype, longinput, latinput, radiu
 #if __name__ == '__main__':
 
 app.run_server(debug=True, host='0.0.0.0', port=8051)
+
 
 
 
