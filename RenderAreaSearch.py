@@ -63,15 +63,6 @@ columnconvert(SupplyLinkInfo, "Linked Facility List")
 columnconvert(SupplyLinkInfo, "Facility Lat-Longs")
 columnconvert(SupplyLinkInfo, "Probability: Square Method")
 
-
-# =============================================================================
-# FacilityLinkInfo['Facility Lats'] = FacilityLinkInfo["Facility Lat-Longs"].str[1]
-# FacilityLinkInfo['Facility Longs'] = FacilityLinkInfo["Facility Lat-Longs"].str[0]
-# 
-# SupplyLinkInfo['Supply Lats'] = SupplyLinkInfo["Supply Lat-Longs"].str[1]
-# SupplyLinkInfo['Supply Longs'] = SupplyLinkInfo["Supply Lat-Longs"].str[0]
-# =============================================================================
-
 NodeIDs = [str(x) + ' (' + str(y) + ')' for x, y in zip(priismdata['Facility Name'], priismdata['Node ID'])]
 NodeIDs = ["All Nodes"] + NodeIDs
 
@@ -140,10 +131,18 @@ server = app.server
 
 # App layout
 app.layout = html.Div([
-    #Precision vs. Freehand
-    html.Div(className='nine columns', children=[
-    dcc.RadioItems(['Precise Search', 'Freehand Search'], 'Precise Search', inline = True, id = 'search-type')
-    ]),
+    html.Div(className='twelve columns', children=[
+        html.Div(className='three columns', children=[
+            html.P('Illinois Wastewater Area Search', style={'font-weight':'bold', 'font-size':'20px', 'margin-left':'5px', 'margin-bottom':'-1px'})
+        ]),
+        html.Div(className='three columns', children=[
+            html.P('Begin by selecting your search method:')
+        ], style={'margin-top':'3px', 'margin-right':'5px', 'text-align':'right'}),
+        html.Div(className='four columns', children=[
+            dcc.RadioItems(['Precise Search', 'Freehand Search'], 'Precise Search', inline = True, id = 'search-type')
+            ], style={'margin-top':'3px', 'margin-left':'15px'})
+        ]),
+    html.Hr(style={'borderWidth': "0.5vh", "width": "100%", "borderColor": "#283242","opacity": "unset",'margin-top':'0px','margin-bottom':'0px'}),
     html.Div([
     #Precision Graph
     html.Div(className='five columns', children=[
@@ -159,10 +158,10 @@ app.layout = html.Div([
             ]),
             html.Tbody([
                 html.Tr([
-                    html.Td(dcc.Input(id='long-input', type='number', value= None, style={'text-align':'center', 'width': 100})),
-                    html.Td(dcc.Input(id='lat-input', type='number', value=None, style={'text-align':'center', 'width': 100})),
-                    html.Td(dcc.Input(id='radius-input', type='number',value=None, style={'text-align':'center', 'width': 120})),
-                    html.Td(html.Button(id='submit-button-state', children='Submit'))
+                    html.Td(dcc.Input(id='long-input', type='number', value= None, style={'text-align':'center', 'width': 100, 'height': 30})),
+                    html.Td(dcc.Input(id='lat-input', type='number', value=None, style={'text-align':'center', 'width': 100, 'height': 30})),
+                    html.Td(dcc.Input(id='radius-input', type='number',value=None, style={'text-align':'center', 'width': 120, 'height': 30})),
+                    html.Td(html.Button(id='submit-button-state', children='Submit', style={'height': '30px', "display": "flex", "alignItems": "center"}))
                 ])
             ])
         ]),
@@ -180,14 +179,14 @@ app.layout = html.Div([
         html.Table([
             html.Thead([
                 html.Tr([
-                    html.Th("Choose an area selection method", style={'text-align':'center','margin-top': '0px', 'margin-bottom': '2px', 'padding-top': '0px', 'padding-bottom': '0px', 'width': '100%'}, colSpan = '3'),
+                    html.Th("Choose a freehand area selection method", style={'text-align':'center','margin-top': '0px', 'margin-bottom': '2px', 'padding-top': '0px', 'padding-bottom': '0px', 'width': '100%'}, colSpan = '3'),
                 ])
             ]),
             html.Tbody([
                 html.Tr([
-                    html.Td(html.Button(id='Box-Select', children='Box Select')),
-                    html.Td(html.Button(id='Pan-Mode', children='Pan Mode')),
-                    html.Td(html.Button(id='Lasso-Select', children='Lasso Select'))
+                    html.Td(html.Button(id='Box-Select', children='Box Select', style={'height': '30px', "display": "flex", "alignItems": "center"})),
+                    html.Td(html.Button(id='Pan-Mode', children='Pan Mode', style={'height': '30px', "display": "flex", "alignItems": "center"})),
+                    html.Td(html.Button(id='Lasso-Select', children='Lasso Select', style={'height': '30px', "display": "flex", "alignItems": "center"})),
                 ])
             ])
         ]),
@@ -452,6 +451,7 @@ def updatelinklist(mapviewboolean, click, searchtype, longinput, latinput, radiu
 #if __name__ == '__main__':
 
 app.run_server(debug=True, host='0.0.0.0', port=8051)
+
 
 
 
